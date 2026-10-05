@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eya's Nail — Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FCF0EC; --ink:#2B1B1A; --rose:#C4436B; --rose-deep:#9E3357;
+    --gold:#C9973E; --line:#E8C7CD; --white:#FFFDFB;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--cream); color:var(--ink); font-family:'Inter',sans-serif; padding:28px 18px 80px; }
+  h1,h2{ font-family:'Fraunces',serif; font-weight:600; }
+  .wrap{ max-width:880px; margin:0 auto; }
+  .card{ background:var(--white); border-radius:16px; padding:24px; margin-bottom:20px; border:1px solid var(--line); }
+  .stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; margin-bottom:8px; }
+  .stat{ background:var(--cream); border-radius:12px; padding:18px; text-align:center; }
+  .stat .num{ font-family:'Fraunces',serif; font-size:1.9rem; font-weight:600; color:var(--rose-deep); }
+  .stat .lbl{ font-size:0.8rem; color:#6b5654; margin-top:4px; }
+  table{ width:100%; border-collapse:collapse; font-size:0.88rem; }
+  th{ text-align:left; color:#6b5654; font-weight:600; padding:8px 10px; border-bottom:1.5px solid var(--line); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; }
+  td{ padding:10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  tr:last-child td{ border-bottom:none; }
+  .rank{ display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .rank:last-child{ border-bottom:none; }
+  .bar{ background:var(--line); height:8px; border-radius:4px; flex:1; overflow:hidden; }
+  .bar-fill{ background:var(--rose); height:100%; }
+  input, textarea{ width:100%; padding:11px 13px; border:1.5px solid var(--line); border-radius:9px; font-family:'Inter'; font-size:0.92rem; margin-bottom:12px; }
+  button{ background:var(--rose); color:var(--white); border:none; padding:12px 24px; border-radius:100px; font-weight:600; cursor:pointer; font-family:'Inter'; font-size:0.92rem; }
+  button:hover{ background:var(--rose-deep); }
+  #gate{ max-width:380px; margin:120px auto; text-align:center; }
+  #dashboard{ display:none; }
+  .status{ margin-top:10px; font-size:0.88rem; color:var(--rose-deep); }
+  .pill{ display:inline-block; font-size:0.72rem; padding:3px 10px; border-radius:100px; background:var(--cream); color:var(--rose-deep); font-weight:600; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h1 style="font-size:1.6rem; margin-bottom:18px;">Eya's Nail — Admin</h1>
+  <input type="password" id="token-input" placeholder="Admin password">
+  <button onclick="loadDashboard()" style="width:100%;">Enter</button>
+  <div class="status" id="gate-status"></div>
+</div>
+
+<div class="wrap" id="dashboard">
+  <h1 style="margin-bottom:24px;">Dashboard</h1>
+
+  <div class="card">
+    <div class="stat-grid">
+      <div class="stat"><div class="num" id="s-pageviews">–</div><div class="lbl">Page views</div></div>
+      <div class="stat"><div class="num" id="s-clicks">–</div><div class="lbl">Book taps</div></div>
+      <div class="stat"><div class="num" id="s-signups">–</div><div class="lbl">Sign-ups</div></div>
+      <div class="stat"><div class="num" id="s-bookings">–</div><div class="lbl">Web bookings</div></div>
+      <div class="stat"><div class="num" id="s-botusers">–</div><div class="lbl">Bot users</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:1.1rem; margin-bottom:14px;">What people click most</h2>
+    <div id="top-clicked"></div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:1.1rem; margin-bottom:14px;">Recent web bookings <span class="pill">call these back</span></h2>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Name</th><th>Phone</th><th>Service</th><th>Date</th><th>Note</th><th>When</th></tr></thead>
+        <tbody id="bookings-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:1.1rem; margin-bottom:14px;">Website sign-ups</h2>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Email</th><th>Telegram</th><th>Phone</th><th>When</th></tr></thead>
+        <tbody id="signups-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:1.1rem; margin-bottom:6px;">Broadcast</h2>
+    <p style="font-size:0.85rem; color:#6b5654; margin-bottom:14px;">Sends to everyone who has started the bot on Telegram. (Website-only visitors who never opened the bot can't be reached this way — use their phone number from Bookings instead.)</p>
+    <textarea id="bcast-text" rows="3" placeholder="Message to send..."></textarea>
+    <button onclick="sendBroadcast()">Send broadcast</button>
+    <div class="status" id="bcast-status"></div>
+  </div>
+</div>
+
+<script>
+  // EDIT THIS: same bot URL as in index.html
+  const API_BASE = "";
+
+  let TOKEN = "";
+
+  function fmtDate(ts){
+    if (!ts) return '-';
+    return new Date(ts * 1000).toLocaleString();
+  }
+
+  async function loadDashboard(){
+    const status = document.getElementById('gate-status');
+    TOKEN = document.getElementById('token-input').value.trim();
+    if (!API_BASE) { status.textContent = 'Set API_BASE in this file first.'; return; }
+    if (!TOKEN) { status.textContent = 'Enter the admin password.'; return; }
+    status.textContent = 'Loading...';
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/dashboard?token=${encodeURIComponent(TOKEN)}`);
+      const data = await res.json();
+      if (!data.ok) { status.textContent = 'Wrong password.'; return; }
+
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+
+      document.getElementById('s-pageviews').textContent = data.pageviews;
+      document.getElementById('s-clicks').textContent = data.total_clicks;
+      document.getElementById('s-signups').textContent = data.signup_count;
+      document.getElementById('s-bookings').textContent = data.booking_count;
+      document.getElementById('s-botusers').textContent = data.bot_users;
+
+      const maxClicks = Math.max(1, ...data.top_clicked.map(c => c.clicks));
+      document.getElementById('top-clicked').innerHTML = data.top_clicked.length
+        ? data.top_clicked.map(c => `
+            <div class="rank">
+              <div style="width:160px; font-size:0.9rem;">${c.label}</div>
+              <div class="bar"><div class="bar-fill" style="width:${(c.clicks/maxClicks*100)}%"></div></div>
+              <div style="width:30px; text-align:right; font-weight:600;">${c.clicks}</div>
+            </div>`).join('')
+        : '<p style="color:#6b5654; font-size:0.9rem;">No clicks yet.</p>';
+
+      document.getElementById('bookings-body').innerHTML = data.bookings.length
+        ? data.bookings.map(b => `
+            <tr>
+              <td>${b.name}</td><td>${b.phone}</td><td>${b.service_key}</td>
+              <td>${b.preferred_date || '-'}</td><td>${b.note || '-'}</td><td>${fmtDate(b.created_at)}</td>
+            </tr>`).join('')
+        : '<tr><td colspan="6" style="color:#6b5654;">No bookings yet.</td></tr>';
+
+      document.getElementById('signups-body').innerHTML = data.signups.length
+        ? data.signups.map(s => `
+            <tr><td>${s.email}</td><td>@${s.telegram_username}</td><td>${s.phone}</td><td>${fmtDate(s.created_at)}</td></tr>`).join('')
+        : '<tr><td colspan="4" style="color:#6b5654;">No sign-ups yet.</td></tr>';
+
+    } catch (err) {
+      status.textContent = 'Could not reach the server.';
+    }
+  }
+
+  async function sendBroadcast(){
+    const status = document.getElementById('bcast-status');
+    const text = document.getElementById('bcast-text').value.trim();
+    if (!text) { status.textContent = 'Write a message first.'; return; }
+    status.textContent = 'Sending...';
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/broadcast`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: TOKEN, text }),
+      });
+      const data = await res.json();
+      status.textContent = data.ok ? `✅ Sending to ${data.sent_to} users.` : (data.error || 'Failed.');
+      if (data.ok) document.getElementById('bcast-text').value = '';
+    } catch (err) {
+      status.textContent = 'Could not reach the server.';
+    }
+  }
+
+  document.getElementById('token-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') loadDashboard();
+  });
+</script>
+
+</body>
+</html>
