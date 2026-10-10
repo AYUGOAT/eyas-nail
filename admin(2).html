@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eya's Nail — Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FCE9E8; --ink:#2B1B1A; --rose:#C54872; --rose-deep:#9C3054;
+    --gold:#C9973E; --line:#E7C9CF; --white:#FFFDFB; --green:#277A43; --red:#B42336;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--cream); color:var(--ink); font-family:'Inter',sans-serif; padding:28px 18px 80px; }
+  h1,h2{ font-family:'Fraunces',serif; font-weight:600; }
+  .wrap{ max-width:880px; margin:0 auto; }
+  .card{ background:var(--white); border-radius:16px; padding:24px; margin-bottom:20px; border:1px solid var(--line); }
+  .stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; margin-bottom:8px; }
+  .stat{ background:var(--cream); border-radius:12px; padding:18px; text-align:center; }
+  .stat .num{ font-family:'Fraunces',serif; font-size:1.9rem; font-weight:600; color:var(--rose-deep); }
+  .stat .lbl{ font-size:0.8rem; color:#6b5654; margin-top:4px; }
+  table{ width:100%; border-collapse:collapse; font-size:0.88rem; }
+  th{ text-align:left; color:#6b5654; font-weight:600; padding:8px 10px; border-bottom:1.5px solid var(--line); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; }
+  td{ padding:10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  tr:last-child td{ border-bottom:none; }
+  .rank{ display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .rank:last-child{ border-bottom:none; }
+  .bar{ background:var(--line); height:8px; border-radius:4px; flex:1; overflow:hidden; }
+  .bar-fill{ background:var(--rose); height:100%; }
+  input, textarea{ width:100%; padding:11px 13px; border:1.5px solid var(--line); border-radius:9px; font-family:'Inter'; font-size:0.92rem; margin-bottom:12px; }
+  button{ background:var(--rose); color:var(--white); border:none; padding:12px 24px; border-radius:100px; font-weight:600; cursor:pointer; font-family:'Inter'; font-size:0.92rem; }
+  button:hover{ filter:brightness(.94); transform:translateY(-1px); }
+  button:disabled{opacity:.48; cursor:not-allowed; transform:none;}
+  select{width:100%; padding:13px 14px; border:1.5px solid var(--line); border-radius:12px; font-family:'Inter'; font-size:1rem; margin-bottom:12px; background:#fff; color:var(--ink);}
+  .photo-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+  .photo-toolbar button{min-height:47px;}
+  .btn-add{background:var(--green)!important;}
+  .btn-replace{background:var(--gold)!important;color:#2B1B1A!important;}
+  .btn-delete{background:var(--red)!important;}
+  .btn-choose{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 18px;border-radius:12px;background:#fff;border:1.5px solid var(--gold);font-weight:600;cursor:pointer;color:var(--ink);}
+  .btn-choose:hover{background:var(--cream);}
+  .file-picker{border:1.5px dashed var(--gold);background:#FFFAF7;border-radius:15px;padding:14px;margin:12px 0;}
+  .file-input-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;}
+  .file-summary{font-size:.88rem;color:#6b5654;margin-top:10px;overflow-wrap:anywhere;}
+  .photo-card{border:1px solid var(--line);border-radius:14px;padding:9px;background:var(--white);box-shadow:0 6px 20px -17px rgba(43,27,26,.5);}
+  .photo-preview{width:100%;aspect-ratio:4/3;object-fit:contain;border-radius:10px;background:var(--cream);}
+  .photo-controls{display:flex;gap:5px;margin-top:8px;align-items:center;flex-wrap:wrap;}
+  .photo-controls button{padding:8px 10px;flex:1;min-width:44px;}
+  .btn-move{background:#F5E5C7!important;color:#573F16!important;}
+  .btn-delete-one{background:var(--red)!important;}
+  .motion-arrows{display:inline-flex;gap:2px;margin-right:7px;color:var(--rose);font-weight:700;white-space:nowrap;}
+  .motion-arrows span{display:inline-block;animation:admin-arrow-dance 1.05s ease-in-out infinite;animation-delay:calc(var(--i) * .09s);}
+  .status{line-height:1.5;min-height:1.3em;}
+  @keyframes admin-arrow-dance{0%,100%{transform:translateY(0);opacity:.55;}50%{transform:translateY(-4px);opacity:1;}}
+  @media(max-width:520px){body{padding:16px 12px 50px}.card{padding:18px}.photo-toolbar{display:grid;grid-template-columns:1fr}.photo-toolbar button{width:100%}.photo-controls button{font-size:.8rem;padding:8px 5px;}}
+  #gate{ max-width:380px; margin:120px auto; text-align:center; }
+  #dashboard{ display:none; }
+  .status{ margin-top:10px; font-size:0.88rem; color:var(--rose-deep); }
+  .pill{ display:inline-block; font-size:0.72rem; padding:3px 10px; border-radius:100px; background:var(--cream); color:var(--rose-deep); font-weight:600; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h1 style="font-size:1.6rem; margin-bottom:18px;">Eya's Nail — Admin</h1>
+  <input type="password" id="token-input" placeholder="Admin password">
+  <button onclick="loadDashboard()" style="width:100%;">Enter</button>
+  <div class="status" id="gate-status"></div>
+</div>
+
+<div class="wrap" id="dashboard">
+  <h1 style="margin-bottom:24px;">Dashboard</h1>
+
+  <div class="card">
+    <div class="stat-grid">
+      <div class="stat"><div class="num" id="s-pageviews">–</div><div class="lbl">Page views</div></div>
+      <div class="stat"><div class="num" id="s-clicks">–</div><div class="lbl">Book taps</div></div>
+      <div class="stat"><div class="num" id="s-signups">–</div><div class="lbl">Sign-ups</div></div>
+      <div class="stat"><div class="num" id="s-bookings">–</div><div class="lbl">Web bookings</div></div>
+      <div class="stat"><div class="num" id="s-botusers">–</div><div class="lbl">Bot users</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:1.1rem; margin-bottom:14px;">What people click most</h2>
+    <div id="top-clicked"></div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:1.1rem; margin-bottom:14px;">Recent web bookings <span class="pill">call these back</span></h2>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Name</th><th>Phone</th><th>Service</th><th>Date</th><th>Note</th><th>When</th></tr></thead>
+        <tbody id="bookings-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:1.1rem; margin-bottom:14px;">Website sign-ups</h2>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Email</th><th>Telegram</th><th>Phone</th><th>When</th></tr></thead>
+        <tbody id="signups-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <div class="card" id="photo-manager-card">
+    <h2 style="font-size:1.2rem; margin-bottom:8px;">📸 Photo Manager</h2>
+    <p style="font-size:.9rem;color:#6b5654;margin-bottom:14px;">Choose a service, preview the full photos, and publish changes to the live website.</p>
+    <select id="photo-service" aria-label="Choose a service">
+      <option value="">🧐 Choose a service...</option>
+    </select>
+    <div id="photo-manager-status" class="status" aria-live="polite"></div>
+    <div id="photo-list" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:12px; margin:14px 0;"></div>
+
+    <div class="file-picker">
+      <input id="photo-files" class="file-input-hidden" type="file" accept="image/*" multiple aria-label="Choose photo files">
+      <label for="photo-files" class="btn-choose">📂 Choose photo files</label>
+      <div id="photo-files-summary" class="file-summary" aria-live="polite">No photos selected yet.</div>
+    </div>
+    <div class="photo-toolbar">
+      <button class="btn-add" onclick="uploadPhotos('add')">✅ Add &amp; publish photos</button>
+      <button class="btn-replace" onclick="uploadPhotos('replace')">✨ Replace all photos</button>
+      <button class="btn-delete" onclick="deleteAllPhotos()">🗑 Delete all</button>
+    </div>
+    <p style="font-size:0.82rem; color:#6b5654; margin-top:12px;">
+      Up to 10 photos per service. Your files are watermarked and published to the website through the bot’s existing storage.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:1.1rem; margin-bottom:6px;">Broadcast</h2>
+    <p style="font-size:0.85rem; color:#6b5654; margin-bottom:14px;">Sends to everyone who has started the bot on Telegram. (Website-only visitors who never opened the bot can't be reached this way — use their phone number from Bookings instead.)</p>
+    <textarea id="bcast-text" rows="3" placeholder="Message to send..."></textarea>
+    <button onclick="sendBroadcast()">Send broadcast</button>
+    <div class="status" id="bcast-status"></div>
+  </div>
+</div>
+
+<script>
+  // EDIT THIS: same bot URL as in index.html
+  const API_BASE = "https://ayu-iedj.onrender.com";
+
+  let TOKEN = "";
+
+  function fmtDate(ts){
+    if (!ts) return '-';
+    return new Date(ts * 1000).toLocaleString();
+  }
+
+  async function loadDashboard(){
+    const status = document.getElementById('gate-status');
+    TOKEN = document.getElementById('token-input').value.trim();
+    if (!API_BASE) { status.textContent = 'Set API_BASE in this file first.'; return; }
+    if (!TOKEN) { status.textContent = 'Enter the admin password.'; return; }
+    adminStatus(status, 'Loading dashboard…', true);
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/dashboard?token=${encodeURIComponent(TOKEN)}`);
+      const data = await res.json();
+      if (!data.ok) { adminStatus(status, 'Wrong password. Check your admin password.', false, true); return; }
+
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      initPhotoManager();
+
+      document.getElementById('s-pageviews').textContent = data.pageviews;
+      document.getElementById('s-clicks').textContent = data.total_clicks;
+      document.getElementById('s-signups').textContent = data.signup_count;
+      document.getElementById('s-bookings').textContent = data.booking_count;
+      document.getElementById('s-botusers').textContent = data.bot_users;
+
+      const maxClicks = Math.max(1, ...data.top_clicked.map(c => c.clicks));
+      document.getElementById('top-clicked').innerHTML = data.top_clicked.length
+        ? data.top_clicked.map(c => `
+            <div class="rank">
+              <div style="width:160px; font-size:0.9rem;">${c.label}</div>
+              <div class="bar"><div class="bar-fill" style="width:${(c.clicks/maxClicks*100)}%"></div></div>
+              <div style="width:30px; text-align:right; font-weight:600;">${c.clicks}</div>
+            </div>`).join('')
+        : '<p style="color:#6b5654; font-size:0.9rem;">No clicks yet.</p>';
+
+      document.getElementById('bookings-body').innerHTML = data.bookings.length
+        ? data.bookings.map(b => `
+            <tr>
+              <td>${b.name}</td><td>${b.phone}</td><td>${b.service_key}</td>
+              <td>${b.preferred_date || '-'}</td><td>${b.note || '-'}</td><td>${fmtDate(b.created_at)}</td>
+            </tr>`).join('')
+        : '<tr><td colspan="6" style="color:#6b5654;">No bookings yet.</td></tr>';
+
+      document.getElementById('signups-body').innerHTML = data.signups.length
+        ? data.signups.map(s => `
+            <tr><td>${s.email}</td><td>@${s.telegram_username}</td><td>${s.phone}</td><td>${fmtDate(s.created_at)}</td></tr>`).join('')
+        : '<tr><td colspan="4" style="color:#6b5654;">No sign-ups yet.</td></tr>';
+
+    } catch (err) {
+      adminStatus(status, 'Could not reach the server. Try again in a moment.', false, true);
+    }
+  }
+
+
+  const PHOTO_SERVICES = [
+    ["gelx_simple", "💅 Gel X Nail Extensions – Simple"],
+    ["gelx_design", "💅 Gel X Nail Extensions – With Design"],
+    ["makeup_simple", "💄 Makeup – Simple"],
+    ["makeup_fullglam", "💄 Makeup – Full Glam"],
+    ["makeup_bridal", "👰 Makeup – Bridal"],
+    ["makeup_creative", "🎨 Makeup – Creative"],
+    ["makeup_sfx", "🎭 Makeup – SFX"]
+  ];
+
+  function adminStatus(el, message, busy=false, error=false){
+    if (!el) return;
+    el.replaceChildren();
+    if (busy){
+      const arrows=document.createElement('span');
+      arrows.className='motion-arrows'; arrows.setAttribute('aria-hidden','true');
+      [...'➘➙➚➘➙➚➠'].forEach((ch,i)=>{const node=document.createElement('span');node.style.setProperty('--i',i);node.textContent=ch;arrows.appendChild(node);});
+      el.appendChild(arrows);
+    }
+    el.style.color = error ? 'var(--red)' : (busy ? 'var(--rose-deep)' : '');
+    el.appendChild(document.createTextNode(message));
+  }
+
+  function photoStatus(msg){
+    const busy=/loading|uploading|replacing|deleting|saving|sending|publishing/i.test(msg);
+    adminStatus(document.getElementById('photo-manager-status'), msg, busy, /could not|failed|error|choose a service first|choose one or more|maximum/i.test(msg));
+  }
+
+  function initPhotoManager(){
+    const sel = document.getElementById('photo-service');
+    if (sel.dataset.initialized === 'true') return;
+    PHOTO_SERVICES.forEach(([key,label]) => {
+      const o = document.createElement('option');
+      o.value = key; o.textContent = label; sel.appendChild(o);
+    });
+    sel.addEventListener('change', loadPhotos);
+    document.getElementById('photo-files').addEventListener('change', updateSelectedFilesLabel);
+    sel.dataset.initialized = 'true';
+  }
+
+  function updateSelectedFilesLabel(){
+    const input = document.getElementById('photo-files');
+    const label = document.getElementById('photo-files-summary');
+    const count = input.files ? input.files.length : 0;
+    if (!count){ label.textContent = 'No photos selected yet.'; return; }
+    const totalBytes = Array.from(input.files).reduce((sum,file)=>sum+file.size,0);
+    const mb = (totalBytes/1024/1024).toFixed(1);
+    label.textContent = `✅ ${count} photo${count===1?'':'s'} selected (${mb} MB total). Ready to publish.`;
+  }
+
+  async function loadPhotos(){
+    const key = document.getElementById('photo-service').value;
+    const list = document.getElementById('photo-list');
+    list.innerHTML = '';
+    if (!key) return;
+
+    photoStatus('Loading photos...');
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/photos/${encodeURIComponent(key)}?token=${encodeURIComponent(TOKEN)}`);
+      const data = await res.json();
+      if (!res.ok || !data.ok) { photoStatus(data.error || 'Could not load photos.'); return; }
+
+      if (!data.photos.length) {
+        list.innerHTML = '<p style="color:#6b5654;font-size:.9rem;">No photos yet.</p>';
+        photoStatus('0 photos');
+        return;
+      }
+
+      data.photos.forEach((url, i) => {
+        const box = document.createElement('div');
+        box.className = 'photo-card';
+        box.innerHTML = `
+          <img class="photo-preview" src="${url}?v=${Date.now()}" alt="Photo ${i+1}">
+          <div class="photo-controls">
+            <button class="btn-move" aria-label="Move photo ${i+1} up" onclick="movePhoto(${i},-1)" ${i===0?'disabled':''}>⬆️</button>
+            <button class="btn-move" aria-label="Move photo ${i+1} down" onclick="movePhoto(${i},1)" ${i===data.photos.length-1?'disabled':''}>⬇️</button>
+            <button class="btn-delete-one" aria-label="Delete photo ${i+1}" onclick="deletePhoto(${i})">✕ Delete</button>
+          </div>`;
+        list.appendChild(box);
+      });
+      photoStatus(`${data.photos.length} photo(s)`);
+    } catch(e) {
+      photoStatus('Could not reach the server.');
+    }
+  }
+
+  async function uploadPhotos(mode){
+    const key = document.getElementById('photo-service').value;
+    const input = document.getElementById('photo-files');
+    if (!key) { photoStatus('🧐 Choose a service first.'); return; }
+    if (!input.files.length) { photoStatus('🧐 Choose one or more photo files first.'); return; }
+
+    const fd = new FormData();
+    fd.append('mode', mode);
+    for (const file of input.files) fd.append('photos', file);
+
+    photoStatus(mode === 'replace' ? 'Replacing and publishing photos…' : 'Uploading and publishing photos…');
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/photos/${encodeURIComponent(key)}/upload?token=${encodeURIComponent(TOKEN)}`, {
+        method:'POST', body:fd
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) { photoStatus(data.error || 'Upload failed.'); return; }
+      input.value = '';
+      updateSelectedFilesLabel();
+      await loadPhotos();
+      photoStatus(`✅ ${data.count} photo(s) published live on the website.`);
+    } catch(e) {
+      photoStatus('Could not reach the server.');
+    }
+  }
+
+  async function deletePhoto(index){
+    const key = document.getElementById('photo-service').value;
+    if (!key || !confirm('✕ Delete this photo from the live website?')) return;
+    photoStatus('Deleting photo…');
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/photos/${encodeURIComponent(key)}/delete?token=${encodeURIComponent(TOKEN)}`, {
+        method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({index})
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) { photoStatus(data.error || 'Delete failed.'); return; }
+      await loadPhotos();
+      photoStatus('✅ Photo deleted from the live website.');
+    } catch(e) { photoStatus('Could not reach the server.'); }
+  }
+
+  async function deleteAllPhotos(){
+    const key = document.getElementById('photo-service').value;
+    if (!key || !confirm('🗑 Delete ALL photos for this service?')) return;
+    photoStatus('Deleting all photos…');
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/photos/${encodeURIComponent(key)}/delete-all?token=${encodeURIComponent(TOKEN)}`, {
+        method:'POST'
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) { photoStatus(data.error || 'Delete failed.'); return; }
+      await loadPhotos();
+      photoStatus('✅ All photos deleted.');
+      document.getElementById('photo-files').value = '';
+      updateSelectedFilesLabel();
+    } catch(e) { photoStatus('Could not reach the server.'); }
+  }
+
+  async function movePhoto(index, direction){
+    const key = document.getElementById('photo-service').value;
+    const list = document.getElementById('photo-list');
+    const count = list.children.length;
+    const newIndex = index + direction;
+    if (!key || newIndex < 0 || newIndex >= count) return;
+
+    const order = Array.from({length:count}, (_,i)=>i);
+    [order[index], order[newIndex]] = [order[newIndex], order[index]];
+
+    photoStatus('Saving photo order…');
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/photos/${encodeURIComponent(key)}/reorder?token=${encodeURIComponent(TOKEN)}`, {
+        method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({order})
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) { photoStatus(data.error || 'Reorder failed.'); return; }
+      await loadPhotos();
+      photoStatus('✅ Photo order updated.');
+    } catch(e) { photoStatus('Could not reach the server.'); }
+  }
+
+  async function sendBroadcast(){
+    const status = document.getElementById('bcast-status');
+    const text = document.getElementById('bcast-text').value.trim();
+    if (!text) { status.textContent = 'Write a message first.'; return; }
+    adminStatus(status, 'Sending broadcast…', true);
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/broadcast`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: TOKEN, text }),
+      });
+      const data = await res.json();
+      adminStatus(status, data.ok ? `✅ Sending to ${data.sent_to} users.` : (data.error || 'Failed.'), false, !data.ok);
+      if (data.ok) document.getElementById('bcast-text').value = '';
+    } catch (err) {
+      adminStatus(status, 'Could not reach the server. Try again in a moment.', false, true);
+    }
+  }
+
+  document.getElementById('token-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') loadDashboard();
+  });
+</script>
+
+</body>
+</html>
