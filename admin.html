@@ -219,7 +219,7 @@
     if (busy){
       const arrows=document.createElement('span');
       arrows.className='motion-arrows'; arrows.setAttribute('aria-hidden','true');
-      [...'➘➙➚➘➙➚➠'].forEach((ch,i)=>{const node=document.createElement('span');node.style.setProperty('--i',i);node.textContent=ch;arrows.appendChild(node);});
+      [...'Eyas Nail'].forEach((ch,i)=>{const node=document.createElement('span');node.style.setProperty('--i',i);node.textContent=ch;arrows.appendChild(node);});
       el.appendChild(arrows);
     }
     el.style.color = error ? 'var(--red)' : (busy ? 'var(--rose-deep)' : '');
