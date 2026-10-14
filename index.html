@@ -15,7 +15,7 @@
 <meta name="description" content="Gel X nail extensions and makeup artistry in Addis Ababa. Book directly on Telegram.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=Noto+Sans+Ethiopic:wght@400;500;600;700&family=Noto+Serif+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --cream:#FCE9E8;
@@ -629,6 +629,13 @@
   .hero .kicker::before{width:38px;height:2px;}
   .hero h1{font-size:clamp(3.35rem,6.1vw,5.25rem);line-height:.99;letter-spacing:-.045em;max-width:10.5ch;font-weight:500;}
   .hero h1 .italic{color:#943655;}
+  /* Purpose-built Ethiopic typography for a cleaner Amharic headline. */
+  html[lang="am"] body{font-family:'Noto Sans Ethiopic','Inter',sans-serif;}
+  html[lang="am"] h1,html[lang="am"] h2,html[lang="am"] h3,html[lang="am"] .serif,html[lang="am"] .hero h1{font-family:'Noto Serif Ethiopic','Fraunces',serif;letter-spacing:0;line-height:1.3;font-weight:600;}
+  html[lang="am"] .hero h1{font-size:clamp(2.45rem,8.2vw,3.55rem);max-width:15ch;}
+  html[lang="am"] .hero h1 .italic{font-style:normal;font-weight:700;}
+  html[lang="am"] .hero .kicker{font-family:'Noto Sans Ethiopic',sans-serif;letter-spacing:0;font-size:.88rem;}
+  html[lang="am"] .hero .btn-primary,html[lang="am"] .hero .btn-secondary,html[lang="am"] .no-telegram-cta{font-family:'Noto Sans Ethiopic',sans-serif;letter-spacing:0;}
   .hero p.lede{max-width:43ch;margin-top:25px;font-size:clamp(1rem,1.35vw,1.14rem);line-height:1.75;color:#5a4549;}
   .hero-actions{margin-top:30px;gap:12px;}
   .btn-primary{box-shadow:0 12px 28px -15px rgba(115,31,63,.8);}
@@ -640,6 +647,12 @@
     box-shadow:0 28px 64px -32px rgba(43,27,38,.54);
   }
   .hero-photo{position:relative;z-index:0;width:100%;height:100%;display:block;object-fit:cover;object-position:center 27%;border-radius:inherit;transform:scale(1.015);}
+  .hero-photo-current,.hero-photo-next{position:absolute;inset:0;transition:opacity 1s ease,transform 5.2s ease;will-change:opacity,transform;}
+  .hero-photo-current{opacity:1;transform:scale(1.04);}
+  .hero-photo-next{opacity:0;transform:scale(1.1);}
+  .hero-photo-frame.is-transitioning .hero-photo-next{opacity:1;transform:scale(1.015);}
+  .hero-photo-frame.is-transitioning .hero-photo-current{opacity:0;transform:scale(1.09);}
+  @media(prefers-reduced-motion:reduce){.hero-photo-current,.hero-photo-next{transition:none;transform:none;}}
   .hero-photo-frame.image-unavailable{background:radial-gradient(ellipse at 50% 22%,#f7dce0,#d9aeb7 48%,#2b1b2a 100%);}
   .hero-photo-frame::after{content:"";position:absolute;z-index:1;inset:25% 0 0;background:linear-gradient(180deg,transparent 16%,rgba(24,15,24,.1) 48%,rgba(24,15,24,.6) 100%);pointer-events:none;}
   .hero-photo-label{position:absolute;z-index:3;top:20px;left:20px;max-width:calc(100% - 40px);display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(255,255,255,.55);border-radius:999px;background:rgba(255,249,246,.9);color:#482235;font-size:.7rem;font-weight:750;letter-spacing:.045em;backdrop-filter:blur(12px);box-shadow:0 8px 26px -17px rgba(0,0,0,.42);}
@@ -649,7 +662,7 @@
   .hero-photo-caption-copy{min-width:0;display:flex;flex-direction:column;gap:4px;}
   .hero-photo-caption-copy>span{font:700 .59rem 'Inter',sans-serif;letter-spacing:.1em;color:#936c32;}
   .hero-photo-caption-copy strong{font:600 clamp(.85rem,1.1vw,1rem) 'Fraunces',serif;color:#291522;line-height:1.15;}
-  .hero-photo-caption-mark{margin-left:auto;align-self:center;display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;border-radius:50%;background:#291522;color:#f5d895;font-size:1rem;}
+  .hero-photo-caption-mark{margin-left:auto;align-self:center;display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:50%;background:#291522;color:#f5d895;font-size:1.1rem;text-decoration:none;transition:transform .2s,background .2s;}.hero-photo-caption-mark:hover{transform:translate(2px,-2px);background:#9c3054;}
   .hero-photo-index{position:absolute;z-index:3;right:18px;top:22px;color:#fff9f6;text-shadow:0 2px 8px rgba(0,0,0,.38);font-size:.62rem;letter-spacing:.16em;font-weight:800;}
   .hero-photo-index span{color:#f2d390;padding:0 4px;}
 
@@ -773,15 +786,16 @@
     </div>
     <div class="hero-visual" aria-label="Eya's Nail beauty artistry">
       <div class="hero-photo-frame">
-        <img class="hero-photo" src="https://images.pexels.com/photos/5579643/pexels-photo-5579643.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;h=1400&amp;w=1000" alt="Makeup artistry inspiration" fetchpriority="high" decoding="async" onerror="this.hidden=true;this.parentElement.classList.add('image-unavailable')">
+        <img class="hero-photo hero-photo-current" src="https://images.pexels.com/photos/5579643/pexels-photo-5579643.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;h=1400&amp;w=1000" alt="Makeup artistry inspiration" fetchpriority="high" decoding="async" onerror="this.hidden=true;this.parentElement.classList.add('image-unavailable')">
+        <img class="hero-photo hero-photo-next" alt="Eya’s Nail beauty portfolio" aria-hidden="true" decoding="async" hidden>
         <div class="hero-photo-label"><span aria-hidden="true">✦</span> <span data-en="Beauty that feels like you" data-am="እርስዎን የሚወክል ውበት">Beauty that feels like you</span></div>
         <div class="hero-photo-caption">
-          <img class="hero-photo-brand" src="./eyas-nail-logo-compact.webp" alt="" loading="lazy" decoding="async">
+          <img class="hero-photo-brand" src="./eyas-nail-logo.png" alt="Eya’s Nail logo" loading="eager" decoding="async" onerror="this.style.display='none'">
           <div class="hero-photo-caption-copy">
             <span data-en="MADE FOR YOUR MOMENT" data-am="ለእርስዎ ቅጽበት የተዘጋጀ">MADE FOR YOUR MOMENT</span>
             <strong data-en="The Eya’s Nail experience" data-am="የEya’s Nail ልምድ">The Eya’s Nail experience</strong>
           </div>
-          <span class="hero-photo-caption-mark" aria-hidden="true">↗</span>
+          <a class="hero-photo-caption-mark" href="#services" aria-label="Explore Eya’s Nail services">↗</a>
         </div>
         <div class="hero-photo-index" aria-hidden="true">01 <span>—</span> ADDIS ABABA</div>
       </div>
@@ -1051,6 +1065,57 @@
   // Change this ONE line if the studio moves later.
   const MAP_LOCATION = "Addis Ababa, Ethiopia";
   // ====================================================================
+
+  // Automatic beauty-photo slideshow: use the studio's uploaded portfolio first.
+  (function initHeroSlideshow(){
+    const frame = document.querySelector('.hero-photo-frame');
+    const current = frame?.querySelector('.hero-photo-current');
+    const next = frame?.querySelector('.hero-photo-next');
+    const counter = frame?.querySelector('.hero-photo-index');
+    if (!frame || !current || !next) return;
+    const fallbackPhotos = [
+      'https://images.pexels.com/photos/5579643/pexels-photo-5579643.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1400&w=1000',
+      'https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1400&w=1000',
+      'https://images.pexels.com/photos/4210860/pexels-photo-4210860.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1400&w=1000',
+      'https://images.pexels.com/photos/939836/pexels-photo-939836.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1400&w=1000'
+    ];
+    let photos = [...fallbackPhotos], index = 0, timer = null, locked = false;
+    const preload = url => new Promise(resolve => { const img = new Image(); img.onload = () => resolve(true); img.onerror = () => resolve(false); img.src = url; });
+    async function loadUploadedPhotos(){
+      if (!API_BASE) return;
+      const keys = [...document.querySelectorAll('.service-row[data-key]')].map(row => row.dataset.key);
+      const results = await Promise.all(keys.map(async key => {
+        try { const r = await fetch(`${API_BASE}/api/photos/${encodeURIComponent(key)}?_hero=${Date.now()}`, {cache:'no-store'}); if (!r.ok) return []; const d = await r.json(); return Array.isArray(d.photos) ? d.photos : []; }
+        catch (_) { return []; }
+      }));
+      const uploaded = [...new Set(results.flat().filter(v => typeof v === 'string' && /^https?:\/\//i.test(v)))];
+      if (uploaded.length) { photos = uploaded.concat(fallbackPhotos.filter(url => !uploaded.includes(url))); current.src = photos[0]; index = 0; }
+    }
+    async function showNext(){
+      if (locked || photos.length < 2 || document.hidden) return;
+      locked = true;
+      let candidate = (index + 1) % photos.length, attempts = 0, ok = false;
+      while (attempts < photos.length && !ok) { ok = await preload(photos[candidate]); if (!ok) { candidate = (candidate + 1) % photos.length; attempts++; } }
+      if (!ok) { locked = false; return; }
+      next.onload = () => {
+        frame.classList.add('is-transitioning');
+        window.setTimeout(() => {
+          current.src = next.src; current.hidden = false; next.removeAttribute('src'); next.hidden = true;
+          frame.classList.remove('is-transitioning'); index = candidate;
+          if (counter) counter.innerHTML = `${String(index + 1).padStart(2,'0')} <span>—</span> ADDIS ABABA`;
+          locked = false;
+        }, 1050);
+      };
+      next.onerror = () => { locked = false; next.hidden = true; };
+      next.hidden = false;
+      next.src = photos[candidate];
+    }
+    let touchX = null;
+    frame.addEventListener('touchstart', e => { touchX = e.changedTouches[0]?.clientX ?? null; }, {passive:true});
+    frame.addEventListener('touchend', e => { if (touchX !== null && Math.abs((e.changedTouches[0]?.clientX ?? touchX)-touchX)>45) showNext(); touchX=null; }, {passive:true});
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && !timer) timer = setInterval(showNext, 4800); });
+    loadUploadedPhotos().then(() => { if (!timer) timer = setInterval(showNext, 4800); });
+  })();
 
   // ---- Branded motion helpers: move the Eya's Nail letters, not arrow symbols ----
   function appendWavingLetters(parent, word, startIndex=0, className='motion-letter'){
@@ -1626,8 +1691,8 @@
 <button id="install-app-button" class="install-app-fab" type="button" aria-label="Install Eya's Nail app">
   <span class="install-app-icon" aria-hidden="true">↓</span>
   <span class="install-app-copy">
-    <small data-en="FREE WEB APP" data-am="ነፃ መተግበሪያ">FREE WEB APP</small>
-    <strong id="install-app-label" data-en="Install Eya’s Nail" data-am="Eya’s Nailን ይጫኑ">Install Eya’s Nail</strong>
+    <small data-en="ADD TO YOUR PHONE" data-am="ወደ ስልክዎ ያክሉ">ADD TO YOUR PHONE</small>
+    <strong id="install-app-label" data-en="Install Eya’s Nail" data-am="Eya’s Nailን ወደ ስልክ ያክሉ">Install Eya’s Nail</strong>
   </span>
   <span class="install-app-arrow" aria-hidden="true">↗</span>
 </button>
